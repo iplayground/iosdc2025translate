@@ -13,8 +13,11 @@ def clean_subtitle_numbers(input_path):
     with input_path.open("r", encoding="utf-8") as f:
         content = f.read()
 
-    # 移除字幕行開頭的「數字+點+空白」
+    # 1️⃣ 移除字幕行開頭的「數字+點+空白」
     cleaned = re.sub(r'(?m)^\d+\.\s*', '', content)
+
+    # 2️⃣ 移除每行結尾的全形或半形標點（。，）
+    cleaned = re.sub(r'(?m)[，。]+$', '', cleaned)
 
     with input_path.open("w", encoding="utf-8") as f:
         f.write(cleaned)
