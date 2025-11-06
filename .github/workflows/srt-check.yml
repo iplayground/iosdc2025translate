@@ -4,9 +4,17 @@ on:
   pull_request:
     branches: [ main, master, develop ]
 
+permissions:
+  pull-requests: write
+  issues: write
+  contents: read
+
 jobs:
   validate-srt:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./ # 確保在 repo 根目錄執行
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -18,23 +26,71 @@ jobs:
 
       - name: Get changed files
         id: changed-files
+        shell: bash
         run: |
-          git fetch origin ${{ github.base_ref }} --depth=1
-          git diff --name-only origin/${{ github.base_ref }}...HEAD > changed_files.txt
+          echo "🔍 Fetching base branch: ${{ github.base_ref }}"
+          git fetch --no-tags --prune --depth=50 origin ${{ github.base_ref }}
+
+          # 抓出改動檔案（盡量別讓 fallback 誤觸）
+          if git merge-base --is-ancestor origin/${{ github.base_ref }} HEAD 2>/dev/null; then
+            git diff --name-only origin/${{ github.base_ref }}...HEAD > changed_files.txt
+          else
+            echo "⚠️ No merge base found, unable to compute diff."
+            echo "" > changed_files.txt
+          fi
+
           echo "CHANGED_FILES<<EOF" >> $GITHUB_ENV
           cat changed_files.txt >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
+
           echo "Changed files:"
           cat changed_files.txt
 
+      # 執行 Python 檢查腳本
       - name: Run SRT format check
         id: srt-check
+        if: contains(env.CHANGED_FILES, '.srt')
+        shell: bash
         run: |
-          python scripts/check_srt_format.py || echo "has_error=true" >> $GITHUB_ENV
+          : > srt_report.txt
+          python script/check_srt_format.py || echo "has_error=true" >> $GITHUB_ENV
+          echo "SRT_REPORT_PATH=$(pwd)/srt_report.txt" >> $GITHUB_ENV
 
+      - name: Skip check if no .srt changed
+        if: "!contains(env.CHANGED_FILES, '.srt')"
+        run: echo "ℹ️ No .srt files changed, skipping validation."
+
+      # 列出報告內容與目錄結構，方便偵錯
+      - name: Debug report file
+        if: always()
+        shell: bash
+        run: |
+          echo "---- Workspace directory ----"
+          pwd
+          echo "---- Files in current folder ----"
+          ls -al
+          echo "---- Report content ----"
+          if [ -f "$SRT_REPORT_PATH" ]; then
+            cat "$SRT_REPORT_PATH"
+            ls -lh "$SRT_REPORT_PATH"
+          else
+            echo "(srt_report.txt not found)"
+          fi
+          echo "--------------------------"
+
+      # 若有錯誤則留言在 PR 上
       - name: Comment on PR if failed
-        if: env.has_error == 'true'
+        if: env.has_error == 'true' && hashFiles('**/srt_report.txt') != ''
         uses: marocchino/sticky-pull-request-comment@v2
         with:
           header: SRT Format Report
-          path: srt_report.txt
+          path: ${{ env.SRT_REPORT_PATH }}
+          recreate: true
+          hide_classify: OUTDATED
+
+      # 若有錯誤則讓 PR 無法 merge
+      - name: Fail if has_error
+        if: env.has_error == 'true'
+        run: |
+          echo "❌ SRT validation failed."
+          exit 1
