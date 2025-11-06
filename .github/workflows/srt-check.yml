@@ -1,0 +1,40 @@
+name: Check SRT Format
+
+on:
+  pull_request:
+    branches: [ main, master, develop ]
+
+jobs:
+  validate-srt:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Get changed files
+        id: changed-files
+        run: |
+          git fetch origin ${{ github.base_ref }} --depth=1
+          git diff --name-only origin/${{ github.base_ref }}...HEAD > changed_files.txt
+          echo "CHANGED_FILES<<EOF" >> $GITHUB_ENV
+          cat changed_files.txt >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+          echo "Changed files:"
+          cat changed_files.txt
+
+      - name: Run SRT format check
+        id: srt-check
+        run: |
+          python scripts/check_srt_format.py || echo "has_error=true" >> $GITHUB_ENV
+
+      - name: Comment on PR if failed
+        if: env.has_error == 'true'
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: SRT Format Report
+          path: srt_report.txt
