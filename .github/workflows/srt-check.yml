@@ -16,37 +16,36 @@ jobs:
       run:
         working-directory: ./ # 確保在 repo 根目錄執行
     steps:
-      - name: Checkout code
+      - name: Checkout PR head
         uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          fetch-depth: 0           
 
       - name: Get changed files
         id: changed-files
         shell: bash
+        env:
+          LC_ALL: C.UTF-8
+          LANG: C.UTF-8
         run: |
-          echo "🔍 Fetching base branch: ${{ github.base_ref }}"
-          git fetch --no-tags --prune --depth=50 origin ${{ github.base_ref }}
+          BASE_SHA=${{ github.event.pull_request.base.sha }}
+          HEAD_SHA=${{ github.event.pull_request.head.sha }}
+          git log --no-merges --name-only --pretty=format: $BASE_SHA..$HEAD_SHA \
+          | grep '\.srt' | sort | uniq | perl -pe 's/\\([0-7]{3})/chr(oct($1))/ge' > changed_files_raw.txt
 
-          # 抓出改動檔案（盡量別讓 fallback 誤觸）
-          if git merge-base --is-ancestor origin/${{ github.base_ref }} HEAD 2>/dev/null; then
-            git diff --name-only origin/${{ github.base_ref }}...HEAD > changed_files.txt
-          else
-            echo "⚠️ No merge base found, unable to compute diff."
-            echo "" > changed_files.txt
-          fi
+          REPO_ROOT=$(pwd)
+          git -C "$REPO_ROOT" -c core.quotePath=false log \
+           --no-merges --name-only --pretty=format: $BASE_SHA..$HEAD_SHA \
+          | grep '\.srt' | sort | uniq | sed "s|^|$REPO_ROOT/|" \
+          | perl -pe 's/\\([0-7]{3})/chr(oct($1))/ge' > changed_files.txt
 
-          echo "CHANGED_FILES<<EOF" >> $GITHUB_ENV
-          cat changed_files.txt >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
 
-          echo "Changed files:"
-          cat changed_files.txt
+          cat changed_files.txt || echo "(none)"   
 
-      # 執行 Python 檢查腳本
+          echo "CHANGED_FILES<<EOF" >> "$GITHUB_ENV"
+          cat changed_files.txt >> "$GITHUB_ENV"
+          echo "EOF" >> "$GITHUB_ENV"
+
       - name: Run SRT format check
         id: srt-check
         if: contains(env.CHANGED_FILES, '.srt')
@@ -55,28 +54,6 @@ jobs:
           : > srt_report.txt
           python script/check_srt_format.py || echo "has_error=true" >> $GITHUB_ENV
           echo "SRT_REPORT_PATH=$(pwd)/srt_report.txt" >> $GITHUB_ENV
-
-      - name: Skip check if no .srt changed
-        if: "!contains(env.CHANGED_FILES, '.srt')"
-        run: echo "ℹ️ No .srt files changed, skipping validation."
-
-      # 列出報告內容與目錄結構，方便偵錯
-      - name: Debug report file
-        if: always()
-        shell: bash
-        run: |
-          echo "---- Workspace directory ----"
-          pwd
-          echo "---- Files in current folder ----"
-          ls -al
-          echo "---- Report content ----"
-          if [ -f "$SRT_REPORT_PATH" ]; then
-            cat "$SRT_REPORT_PATH"
-            ls -lh "$SRT_REPORT_PATH"
-          else
-            echo "(srt_report.txt not found)"
-          fi
-          echo "--------------------------"
 
       # 若有錯誤則留言在 PR 上
       - name: Comment on PR if failed
