@@ -453,7 +453,7 @@ build scheme 的管理、減少 Preview 對象的相依性、
 
 114
 00:06:11,132 --> 00:06:14,564
-當要用 Xcode Preview 來 preview 特定的 component
+當要用 Xcode Previews 來 preview 特定的 component
 
 115
 00:06:14,600 --> 00:06:18,733
@@ -1461,7 +1461,7 @@ Xcode Preview 生活
 
 366
 00:20:49,278 --> 00:20:53,640
-平常我們會把這個 Media.xcassets 加到 app 的 Target 裡
+平常我們會把這個 Media.xcassets 加到 app target 裡
 
 367
 00:20:53,640 --> 00:20:57,759
