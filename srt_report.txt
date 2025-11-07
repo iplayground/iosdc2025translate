@@ -1,0 +1,5 @@
+❌ **SRT Format Validation Failed**
+
+- `./大規模アプリにおけるXcode_Previews実用化までの道のり/大規模アプリにおけるXcode_Previews実用化までの道のり.ja.srt`: Block 362: line 1446 start time overlaps with previous block 361 (previous end at line 1442)
+
+Please fix the issues above and push again to re-run the check.
