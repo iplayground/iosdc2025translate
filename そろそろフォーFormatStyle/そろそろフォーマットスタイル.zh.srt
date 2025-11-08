@@ -2024,7 +2024,7 @@ StoreKit 框架中也有 FormatStyle 存在
 
 507
 01:43:37,133 --> 01:43:42,833
-我記得有 Double 型別或浮點數的 FormatStyle 
+我記得有 Double 型別或浮點數的 FormatStyle
 
 508
 01:43:42,833 --> 01:43:46,833
