@@ -1384,5 +1384,5 @@ CGImage 的情況下，只要繪製到 CGContext
 
 347  
 00:24:06,900 --> 00:24:23,000
-翻譯：Vincent
+翻譯：Lihsuan Chen
 校稿：dsxsxsxs
