@@ -168,7 +168,7 @@
 
 43
 00:03:08,900 --> 00:03:12,699
-然後你就得『啊～』一聲，重新打開 app
+然後你就得「啊～」一聲，重新打開 app
 
 44
 00:03:12,699 --> 00:03:14,599
@@ -620,7 +620,7 @@ Premium Pro 是比較高階的方案，一個月大概1000日圓
 
 156
 00:10:27,566 --> 00:10:34,766
-或是需要設定 `AVAudioSession` 的 category 為 playback 之類的
+或是需要設定 AVAudioSession 的 category 為 playback 之類的
 
 157
 00:10:34,799 --> 00:10:36,899
@@ -644,7 +644,7 @@ Premium Pro 是比較高階的方案，一個月大概1000日圓
 
 162
 00:10:47,200 --> 00:10:49,299
-導致『怎麼沒有啟動』的狀況
+導致「怎麼沒有啟動」的狀況
 
 163
 00:10:49,299 --> 00:10:52,100
@@ -748,7 +748,7 @@ Premium Pro 是比較高階的方案，一個月大概1000日圓
 
 188
 00:12:07,600 --> 00:12:09,899
-像是 `AVSampleBufferDisplayLayer`
+像是 AVSampleBufferDisplayLayer
 
 189
 00:12:09,899 --> 00:12:12,399
@@ -768,7 +768,7 @@ Premium Pro 是比較高階的方案，一個月大概1000日圓
 
 193
 00:12:18,399 --> 00:12:21,100
-`PictuireInPictureController` 必須已被初始化
+PictuireInPictureController 必須已被初始化
 
 194
 00:12:21,700 --> 00:12:22,200
@@ -912,7 +912,7 @@ Delegate 的程式碼大概是長這樣
 
 229
 00:14:33,366 --> 00:14:35,799
-右邊有返回App的按鈕
+右邊有返回 app 的按鈕
 
 230
 00:14:35,799 --> 00:14:38,066
@@ -1032,7 +1032,7 @@ PIP 的畫面有時會變全黑
 
 259
 00:16:26,000 --> 00:16:27,866
-就會被其他App覆蓋過去
+就會被其他 app 覆蓋過去
 
 260
 00:16:27,866 --> 00:16:29,866
@@ -1604,11 +1604,11 @@ plist 裡面需要填入 Background Task 的 ID
 
 402
 00:25:19,400 --> 00:25:21,200
-這個 `register`
+這個 register
 
 403
 00:25:21,266 --> 00:25:24,166
-`BGTaskScheduler.register`
+BGTaskScheduler.register
 
 404
 00:25:24,166 --> 00:25:27,166
@@ -1632,11 +1632,11 @@ plist 裡面需要填入 Background Task 的 ID
 
 409
 00:25:41,066 --> 00:25:47,500
-之後再把它 casting 成 `BGProcessingTask`
+之後再把它 casting 成 BGProcessingTask
 
 410
 00:25:47,566 --> 00:25:49,500
-`expirationHandler` 這邊
+expirationHandler 這邊
 
 411
 00:25:49,500 --> 00:25:52,400
@@ -1668,7 +1668,7 @@ plist 裡面需要填入 Background Task 的 ID
 
 418
 00:26:19,299 --> 00:26:24,900
-最後是 `setTaskCompleted`
+最後是 setTaskCompleted
 
 419
 00:26:24,900 --> 00:26:28,200
@@ -1716,7 +1716,7 @@ plist 裡面需要填入 Background Task 的 ID
 
 430
 00:27:01,466 --> 00:27:04,766
-然後 `BGTaskScheduler.submit` 出去
+然後 BGTaskScheduler.submit 出去
 
 431
 00:27:04,799 --> 00:27:06,900
@@ -1876,7 +1876,7 @@ Continued Processing Task
 
 470
 00:29:31,000 --> 00:29:37,599
-還有，`BGContinuedProcessingTask`...
+還有，BGContinuedProcessingTask...
 
 471
 00:29:37,599 --> 00:29:40,700
@@ -1900,11 +1900,11 @@ Continued Processing Task
 
 476
 00:30:00,266 --> 00:30:02,900
-至於能不能跨 App
+至於能不能跨 app
 
 477
 00:30:02,900 --> 00:30:05,566
-是一個 App 只能一個呢？
+是一個 app 只能一個呢？
 
 478
 00:30:05,566 --> 00:30:07,566
@@ -2068,7 +2068,7 @@ BGContinuedProcessingTask
 
 518
 00:32:05,299 --> 00:32:07,466
-就會想用 `BGContinuedProcessingTask`
+就會想用 BGContinuedProcessingTask
 
 519
 00:32:07,466 --> 00:32:08,666
@@ -2120,7 +2120,7 @@ PIP 的實作我還是覺得有點難
 
 531
 00:32:44,766 --> 00:32:48,200
-但 `ContinuedProcessingTask` 的實作就沒那麼難
+但 ContinuedProcessingTask 的實作就沒那麼難
 
 532
 00:32:48,200 --> 00:32:50,500
@@ -2164,7 +2164,7 @@ UI 的自由度，因為基本上是統一的規格
 
 542
 00:33:18,900 --> 00:33:22,366
-讓 iOS App 也能做到背景上傳
+讓 iOS app 也能做到背景上傳
 
 543
 00:33:22,366 --> 00:33:23,700
@@ -2176,7 +2176,7 @@ UI 的自由度，因為基本上是統一的規格
 
 545
 00:33:26,599 --> 00:33:31,000
-而 iOS 26 的 `BGContinuedProcessingTask`
+而 iOS 26 的 BGContinuedProcessingTask
 
 546
 00:33:31,000 --> 00:33:34,599
